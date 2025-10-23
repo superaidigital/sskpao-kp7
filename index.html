@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบยื่นคำร้องขอสำเนาทะเบียนประวัติ ก.พ.7</title>
+    <!-- โหลด Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- โหลดฟอนต์ Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ใช้ฟอนต์ Sarabun สำหรับภาษาไทย และ Inter สำหรับภาษาอังกฤษ */
+        body {
+            font-family: 'Sarabun', 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
+        
+        <!-- ส่วนหัวและโลโก้ (ตัวอย่าง) -->
+        <div class="text-center mb-6">
+            <img src="https://placehold.co/100x100/e2e8f0/9ca3af?text=อบจ.%0Aศรีสะเกษ" 
+                 alt="โลโก้ องค์การบริหารส่วนจังหวัดศรีสะเกษ"
+                 class="w-20 h-20 mx-auto rounded-full mb-4 object-cover">
+            <h1 class="text-2xl font-bold text-gray-800">
+                ระบบยื่นแบบคำร้องขอสำเนาทะเบียนประวัติ ก.พ.7
+            </h1>
+            <p class="text-gray-600 mt-1">องค์การบริหารส่วนจังหวัดศรีสะเกษ</p>
+        </div>
+
+        <!-- ฟอร์มยื่นคำร้อง -->
+        <form id="requestForm">
+            <div class="space-y-4">
+                
+                <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-3">
+                    1. ข้อมูลผู้ยื่นคำร้อง
+                </h2>
+
+                <!-- คำนำหน้า -->
+                <div>
+                    <label for="prefix" class="block text-sm font-medium text-gray-700 mb-1">คำนำหน้าชื่อ</label>
+                    <select id="prefix" name="prefix" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                        <option value="">-- เลือกคำนำหน้า --</option>
+                        <option value="นาย">นาย</option>
+                        <option value="นาง">นาง</option>
+                        <option value="นางสาว">นางสาว</option>
+                        <option value="อื่น ๆ">อื่น ๆ</option>
+                    </select>
+                    <!-- ช่องสำหรับกรอก "อื่น ๆ" (ซ่อนไว้เริ่มต้น) -->
+                    <div id="otherPrefixSection" class="hidden mt-2">
+                        <label for="otherPrefix" class="block text-sm font-medium text-gray-700 mb-1">โปรดระบุคำนำหน้า</label>
+                        <input type="text" id="otherPrefix" name="otherPrefix"
+                               placeholder="กรอกคำนำหน้า"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                    </div>
+                </div>
+
+                <!-- ชื่อ -->
+                <div>
+                    <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ</label>
+                    <input type="text" id="firstName" name="firstName" required
+                           placeholder="กรอกชื่อจริง"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                </div>
+
+                <!-- นามสกุล -->
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">นามสกุล</label>
+                    <input type="text" id="lastName" name="lastName" required
+                           placeholder="กรอกนามสกุล"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                </div>
+
+                <!-- ตำแหน่ง -->
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่ง (ถ้ามี)</label>
+                    <input type="text" id="position" name="position"
+                           placeholder="เช่น นักทรัพยากรบุคคล"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- สังกัด -->
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">สังกัด/หน่วยงาน (ถ้ามี)</label>
+                    <input type="text" id="department" name="department"
+                           placeholder="เช่น กองการเจ้าหน้าที่"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mt-6 mb-3">
+                    2. ข้อมูลการติดต่อและเหตุผล
+                </h2>
+
+                <!-- เบอร์โทรศัพท์ -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ</label>
+                    <input type="tel" id="phone" name="phone" required
+                           placeholder="08X-XXX-XXXX"
+                           pattern="[0-9]{10}"
+                           title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                    <p class="mt-1 text-xs text-gray-500">รูปแบบ: 08XXXXXXXX (10 หลัก)</p>
+                </div>
+
+                <!-- เหตุผลในการขอ -->
+                <div>
+                    <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลในการขอสำเนา</label>
+                    <textarea id="reason" name="reason" rows="3" required
+                              placeholder="เช่น เพื่อใช้ในการสมัครงาน, เพื่อประกอบการพิจารณาเลื่อนขั้น..."
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500"></textarea>
+                </div>
+
+                <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mt-6 mb-3">
+                    3. ช่องทางการรับเอกสาร
+                </h2>
+
+                <!-- ช่องทางการรับเอกสาร -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ช่องทางการรับเอกสาร</label>
+                    <fieldset class="mt-2">
+                        <legend class="sr-only">เลือกช่องทางการรับเอกสาร</legend>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input id="pickup" name="deliveryMethod" type="radio" value="pickup" required
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                <label for="pickup" class="ml-3 block text-sm font-medium text-gray-700">
+                                    รับด้วยตนเอง
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="mail" name="deliveryMethod" type="radio" value="mail" required
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                <label for="mail" class="ml-3 block text-sm font-medium text-gray-700">
+                                    จัดส่งทางไปรษณีย์
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="email" name="deliveryMethod" type="radio" value="email" required
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                <label for="email" class="ml-3 block text-sm font-medium text-gray-700">
+                                    รับทางอีเมล (ไฟล์สแกน)
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- ที่อยู่จัดส่ง (ซ่อนไว้เริ่มต้น) -->
+                <div id="addressSection" class="hidden">
+                    <label for="address" class="block text-sm font-medium text-gray-700 mb-1">ที่อยู่สำหรับจัดส่ง</label>
+                    <textarea id="address" name="address" rows="3"
+                              placeholder="กรอกบ้านเลขที่, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500"></textarea>
+                </div>
+
+                <!-- อีเมล (ซ่อนไว้เริ่มต้น) -->
+                <div id="emailSection" class="hidden">
+                    <label for="emailInput" class="block text-sm font-medium text-gray-700 mb-1">อีเมลสำหรับรับเอกสาร</label>
+                    <input type="email" id="emailInput" name="emailInput"
+                           placeholder="example@email.com"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 invalid:border-red-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                    <p class="mt-1 text-xs text-gray-500">รูปแบบ: example@email.com</p>
+                </div>
+
+                <!-- PDPA Consent -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <input id="pdpa" name="pdpa" type="checkbox" required
+                                   class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded mt-0.5">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="pdpa" class="font-medium text-gray-800 text-base">4. การยืนยันและยินยอม (Consent)</label>
+                            <p class="text-gray-500 mt-1">ข้าพเจ้ายินยอมให้องค์การบริหารส่วนจังหวัดศรีสะเกษ เก็บรวบรวมและใช้ข้อมูลส่วนบุคคลของข้าพเจ้าที่ให้ไว้ในแบบฟอร์มนี้ เพื่อวัตถุประสงค์ในการดำเนินการตามคำร้องขอสำเนาทะเบียนประวัติ ก.พ.7 เท่านั้น</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- ข้อความแจ้งเตือน (ซ่อนไว้ก่อน) -->
+            <!-- <div id="successMessage" class="hidden mt-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md text-center">
+                <p class="font-medium">ยื่นคำร้องสำเร็จ!</p>
+                <p class="text-sm">เจ้าหน้าที่จะตรวจสอบและติดต่อกลับโดยเร็วที่สุด</p>
+            </div> -->
+
+            <!-- ปุ่มส่งข้อมูล -->
+            <div class="mt-6">
+                <button type="submit" id="submitButton"
+                        disabled
+                        class="w-full py-3 px-4 bg-gray-400 text-white font-semibold rounded-md shadow-sm cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition duration-200 ease-in-out">
+                    ยื่นคำร้อง
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center transform transition-all scale-95 opacity-0"
+             style="transition: all 0.3s ease-out;">
+            <!-- Icon -->
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mt-5">ยื่นคำร้องสำเร็จ!</h3>
+            <p id="modalMessage" class="text-gray-600 mt-2">เจ้าหน้าที่จะตรวจสอบและติดต่อกลับโดยเร็วที่สุด</p>
+            <button type="button" id="closeModalButton" class="mt-6 w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200">
+                ปิด
+            </button>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center transform transition-all scale-95 opacity-0"
+             style="transition: all 0.3s ease-out;">
+            <!-- Icon -->
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mt-5">เกิดข้อผิดพลาด!</h3>
+            <p id="errorMessage" class="text-gray-600 mt-2">ไม่สามารถยื่นคำร้องได้ในขณะนี้</p>
+            <button type="button" id="closeErrorModalButton" class="mt-6 w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200">
+                ปิด
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // เลือกองค์ประกอบที่จำเป็น
+        const requestForm = document.getElementById('requestForm');
+        // Modal
+        const successModal = document.getElementById('successModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const modalContent = successModal.querySelector('div');
+        const modalMessage = document.getElementById('modalMessage');
+        
+        // Error Modal
+        const errorModal = document.getElementById('errorModal');
+        const closeErrorModalButton = document.getElementById('closeErrorModalButton');
+        const errorModalContent = errorModal.querySelector('div');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // องค์ประกอบสำหรับ "คำนำหน้า"
+        const prefixSelect = document.getElementById('prefix');
+        const otherPrefixSection = document.getElementById('otherPrefixSection');
+        const otherPrefixInput = document.getElementById('otherPrefix');
+
+        // ส่วนของช่องทางการรับเอกสาร
+        const pickupRadio = document.getElementById('pickup');
+        const mailRadio = document.getElementById('mail');
+        const addressSection = document.getElementById('addressSection');
+        const addressTextarea = document.getElementById('address');
+
+        // องค์ประกอบใหม่สำหรับอีเมล
+        const emailRadio = document.getElementById('email');
+        const emailSection = document.getElementById('emailSection');
+        const emailInput = document.getElementById('emailInput');
+
+        // องค์ประกอบสำหรับ PDPA และปุ่ม Submit
+        const pdpaCheckbox = document.getElementById('pdpa');
+        const submitButton = document.getElementById('submitButton');
+
+        // ฟังก์ชันสำหรับแสดง/ซ่อนช่องที่อยู่และอีเมล
+        function toggleDeliverySections() {
+            if (mailRadio.checked) {
+                // แสดงที่อยู่
+                addressSection.classList.remove('hidden');
+                addressTextarea.setAttribute('required', 'required');
+                
+                // ซ่อนอีเมล
+                emailSection.classList.add('hidden');
+                emailInput.removeAttribute('required');
+                emailInput.value = '';
+
+            } else if (emailRadio.checked) {
+                // แสดงอีเมล
+                emailSection.classList.remove('hidden');
+                emailInput.setAttribute('required', 'required');
+
+                // ซ่อนที่อยู่
+                addressSection.classList.add('hidden');
+                addressTextarea.removeAttribute('required');
+                addressTextarea.value = '';
+
+            } else { // กรณีเลือก "รับด้วยตนเอง" หรือยังไม่เลือก
+                // ซ่อนทั้งคู่
+                addressSection.classList.add('hidden');
+                addressTextarea.removeAttribute('required');
+                addressTextarea.value = '';
+
+                emailSection.classList.add('hidden');
+                emailInput.removeAttribute('required');
+                emailInput.value = '';
+            }
+        }
+
+        // ฟังก์ชันสำหรับแสดง/ซ่อนช่อง "อื่น ๆ" ของคำนำหน้า
+        function toggleOtherPrefix() {
+            if (prefixSelect.value === 'อื่น ๆ') {
+                otherPrefixSection.classList.remove('hidden');
+                otherPrefixInput.setAttribute('required', 'required');
+            } else {
+                otherPrefixSection.classList.add('hidden');
+                otherPrefixInput.removeAttribute('required');
+                otherPrefixInput.value = '';
+            }
+        }
+
+        // เพิ่ม Event Listener ให้กับ "คำนำหน้า"
+        prefixSelect.addEventListener('change', toggleOtherPrefix);
+
+        // เพิ่ม Event Listener ให้กับ Radio Buttons
+        pickupRadio.addEventListener('change', toggleDeliverySections);
+        mailRadio.addEventListener('change', toggleDeliverySections);
+        emailRadio.addEventListener('change', toggleDeliverySections); // เพิ่ม listener
+
+        // เพิ่ม Event Listener ให้กับ PDPA Checkbox
+        pdpaCheckbox.addEventListener('change', function() {
+            if (pdpaCheckbox.checked) {
+                // ถ้าติ๊กแล้ว: เปิดใช้งานปุ่ม และเปลี่ยนเป็นสีน้ำเงิน
+                submitButton.disabled = false;
+                submitButton.classList.remove('bg-gray-400', 'cursor-not-allowed', 'focus:ring-gray-400');
+                submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700', 'focus:ring-blue-500');
+            } else {
+                // ถ้าไม่ได้ติ๊ก: ปิดใช้งานปุ่ม และเปลี่ยนเป็นสีเทา
+                submitButton.disabled = true;
+                submitButton.classList.add('bg-gray-400', 'cursor-not-allowed', 'focus:ring-gray-400');
+                submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'focus:ring-blue-500');
+            }
+        });
+
+        // --- (ปรับปรุง) ฟังก์ชันแสดง Error Modal ---
+        function showErrorModal(message) {
+            errorMessage.textContent = message || 'ไม่สามารถยื่นคำร้องได้ในขณะนี้';
+            errorModal.classList.remove('hidden');
+            setTimeout(() => {
+                errorModalContent.classList.remove('scale-95', 'opacity-0');
+                errorModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // --- (ปรับปรุง) ฟังก์ชันแสดง Success Modal ---
+        function showSuccessModal() {
+            // 1. ตั้งค่าข้อความใน Modal ตามช่องทางที่เลือก
+            const selectedDeliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+            let message = '';
+
+            if (selectedDeliveryMethod === 'pickup') {
+                message = 'ประมาณ 1 - 2 วันทำการ ท่านสามารถรับเอกสารได้ที่ กองการเจ้าหน้าที่ องค์การบริหารส่วนจังหวัดศรีสะเกษ';
+            } else if (selectedDeliveryMethod === 'mail') {
+                message = 'ประมาณ 3 - 5 วันทำการ (ขึ้นอยู่กับระยะทาง) เจ้าหน้าที่จะจัดส่งเอกสารไปยังที่อยู่ที่ท่านระบุ';
+            } else if (selectedDeliveryMethod === 'email') {
+                message = 'ประมาณ 1 - 2 วันทำการ เจ้าหน้าที่จะจัดส่งไฟล์สแกนไปยังอีเมลที่ท่านระบุ';
+            } else {
+                message = 'เจ้าหน้าที่จะตรวจสอบและติดต่อกลับโดยเร็วที่สุด'; // ข้อความสำรอง
+            }
+            modalMessage.textContent = message;
+
+            // 2. แสดงข้อความแจ้งเตือน (Modal)
+            successModal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // --- (ปรับปรุง) ฟังก์ชัน Reset Form ---
+        function resetForm() {
+             // 3. ล้างข้อมูลในฟอร์ม
+            requestForm.reset();
+
+            // 4. ซ่อนช่องที่อยู่และอีเมลหลังจากรีเซ็ตฟอร์ม
+            addressSection.classList.add('hidden');
+            addressTextarea.removeAttribute('required');
+            emailSection.classList.add('hidden');
+            emailInput.removeAttribute('required');
+
+            // 5. ซ่อนช่อง "อื่น ๆ" ของคำนำหน้า
+            otherPrefixSection.classList.add('hidden');
+            otherPrefixInput.removeAttribute('required');
+
+            // 6. รีเซ็ตปุ่มยื่นคำร้องกลับเป็นสถานะ disabled (เพราะ checkbox ถูก reset)
+            submitButton.disabled = true;
+            submitButton.classList.add('bg-gray-400', 'cursor-not-allowed', 'focus:ring-gray-400');
+            submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'focus:ring-blue-500');
+        }
+
+
+        // --- (ปรับปรุง) Event Listener เมื่อฟอร์มถูกส่ง ---
+        requestForm.addEventListener('submit', function(event) {
+            // ป้องกันการรีโหลดหน้าเว็บ
+            event.preventDefault();
+
+            // เปลี่ยนปุ่มเป็น "กำลังส่ง..." ชั่วคราว
+            submitButton.disabled = true;
+            submitButton.textContent = 'กำลังส่งข้อมูล...';
+            submitButton.classList.add('opacity-75');
+
+            // --- ส่งข้อมูลไปยัง PHP Backend ---
+            const formData = new FormData(requestForm);
+
+            fetch('submit_request.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                 if (!response.ok) {
+                    // กรณี Server error (เช่น 500, 404)
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // --- ถ้าสำเร็จ ---
+                    showSuccessModal();
+                    resetForm();
+                } else {
+                    // --- ถ้า PHP ส่ง error กลับมา ---
+                    showErrorModal(data.message);
+                }
+            })
+            .catch(error => {
+                // --- ถ้าเกิดข้อผิดพลาดในการเชื่อมต่อ (เช่น network, server down) ---
+                console.error('Fetch Error:', error);
+                showErrorModal('เกิดข้อผิดพลาดในการเชื่อมต่อ ไม่สามารถส่งข้อมูลได้');
+            })
+            .finally(() => {
+                // คืนค่าปุ่มกลับมาเป็นปกติ (ไม่ว่าจะสำเร็จหรือล้มเหลว)
+                // (ยกเว้นกรณีสำเร็จ ที่ปุ่มจะถูก reset เป็น disabled ไปแล้ว)
+                if (!pdpaCheckbox.checked) {
+                     submitButton.disabled = true;
+                } else {
+                    submitButton.disabled = false;
+                }
+               
+                submitButton.textContent = 'ยื่นคำร้อง';
+                submitButton.classList.remove('opacity-75');
+            });
+        });
+
+        // เพิ่ม Event Listener ให้ปุ่มปิด Modal
+        closeModalButton.addEventListener('click', function() {
+            // ซ่อน Modal พร้อม animation
+            modalContent.classList.add('scale-95', 'opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            
+            setTimeout(() => {
+                successModal.classList.add('hidden');
+            }, 300); // รอให้ animation จบก่อน
+        });
+
+        // เพิ่ม Event Listener ให้ปุ่มปิด Error Modal
+        closeErrorModalButton.addEventListener('click', function() {
+            // ซ่อน Modal พร้อม animation
+            errorModalContent.classList.add('scale-95', 'opacity-0');
+            errorModalContent.classList.remove('scale-100', 'opacity-100');
+            
+            setTimeout(() => {
+                errorModal.classList.add('hidden');
+            }, 300);
+        });
+
+    </script>
+
+</body>
+</html>
+
